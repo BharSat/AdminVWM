@@ -53,6 +53,17 @@ public class ProjectManager {
         return new FileWriter(this.file, true);
     }
 
+    public FileWriter truncate(Boolean close) throws IOException {
+        FileWriter trunc = new FileWriter(this.file, false);
+        if (close) {trunc.close(); return trunc;}
+        return trunc;
+
+    }
+
+    public void truncate() throws IOException {
+        truncate(true);
+    }
+
     public static FileReader openFileReader(String filePath) throws IOException {
         return new FileReader(openFile(filePath));
     }
@@ -63,16 +74,28 @@ public class ProjectManager {
 
     public void initPlatformLocations(int sessions, int trials) {
         int session = 0;
-        int trial = 0;
         while (session < sessions) {
             data.put(String.valueOf(session), new HashMap<>());
             session++;
         }
+        data.get("data").put("sessions", String.valueOf(sessions));
+        data.get("data").put("trials", String.valueOf(trials));
         System.out.println(data);
     }
 
     public void setPlatformLocation(int sessionNo, int trialNo, float x1, float x2, float y1, float y2) {
         data.get(String.valueOf(sessionNo)).put(String.valueOf(trialNo), ""+x1+" "+y1+","+x2+" "+y2);
         System.out.print(data);
+    }
+
+    public void save() {
+        if (!platformLocationInitialized) {return;}
+        try {
+            FileWriter fileWriter = openFileWriter();
+            fileWriter.write();
+            fileWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
