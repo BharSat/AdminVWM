@@ -7,12 +7,12 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.input.controls.*;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -35,6 +35,15 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected Node rotNode = new Node();
     protected Node mainGuiNode = new Node();
     protected Label statLabel;
+    protected DirectionalLight camLight = new DirectionalLight();
+    protected TextField projectName;
+    protected TextField dirNameText;
+    protected TextField sessionsText;
+    protected TextField trialsText;
+    protected TextField projectFileText;
+    protected TextField modelPath;
+    protected ProjectManager currentProject;
+
 
     @Override
     protected synchronized void initialize(Application appB) {
@@ -112,7 +121,10 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected void newSettings() {
         mode = 2;
         mainGuiNode.detachAllChildren();
+        cam.setLocation(new Vector3f(0, 0, 10f));
+        cam.setRotation(new Quaternion(-0.0052f, 0.9828f, 0.1820f, 0.0283f));
         inputManager.setCursorVisible(false);
+        this.app.getFlyByCamera().setEnabled(true);
         Container newWindow = new Container();
         newWindow.setLocalTranslation(0, 700, 0);
         newWindow.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight()/8f, 1));
@@ -152,7 +164,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
 //        rootNode.attachChild(startLabel);
     }
 
-    public void newGame(String name) {
+    public void newProject(String name) {
         mode = 3;
         System.out.println(name);
         mainGuiNode.detachAllChildren();
@@ -184,28 +196,45 @@ public class GameAppState extends BaseAppState implements ActionListener {
         infoMenu.setPreferredSize(new Vector3f(cam.getWidth()/2f, cam.getHeight(), 1));
 
         infoMenu.addChild(new Label("Name: "), 0, 0);
-        TextField projectName = infoMenu.addChild(new TextField("New Project-1"), 0, 1);
-        infoMenu.addChild(new Label("Rounds:"), 1, 0);
-        TextField sessionsText = infoMenu.addChild(new TextField("10"), 1, 1);
-        infoMenu.addChild(new Label("Trials:"), 2, 0);
-        TextField trialsText = infoMenu.addChild(new TextField("4"), 2, 1);
-        infoMenu.addChild(new Label("Platform file:"), 3, 0);
-        TextField platformFileText = infoMenu.addChild(new TextField("platforms.csv"), 3, 1);
-        Button saveButton = infoMenu.addChild(new Button("Save Project"), 4, 0);
-        Button loadButton = infoMenu.addChild(new Button("Load Locations"), 4, 1);
+        projectName = infoMenu.addChild(new TextField("New Project-1"), 0, 1);
+        infoMenu.addChild(new Label("Root Directory: "), 1, 0);
+        dirNameText = infoMenu.addChild(new TextField(System.getProperty("user.dir")), 1, 1);
+        infoMenu.addChild(new Label("Rounds:"), 2, 0);
+        sessionsText = infoMenu.addChild(new TextField("10"), 2, 1);
+        infoMenu.addChild(new Label("Trials:"), 3, 0);
+        trialsText = infoMenu.addChild(new TextField("4"), 3, 1);
+        infoMenu.addChild(new Label("Platform file:"), 4, 0);
+        projectFileText = infoMenu.addChild(new TextField("newProject1.csv"), 4, 1);
+        infoMenu.addChild(new Label("Model files:"), 5, 0);
+        modelPath = infoMenu.addChild(new TextField("/models/<model_name>/<model_name>.gltf"), 5, 1);
+        Button saveButton = infoMenu.addChild(new Button("Main Menu"), 6, 0);
+        saveButton.addClickCommands(source -> {rotNode.detachAllChildren();openMenu();});
+        Button loadButton = infoMenu.addChild(new Button("Start Project"), 6, 1);
+        loadButton.addClickCommands(source -> {mainGuiNode.detachAllChildren();startProject();});
 
-        guiNode.attachChild(infoMenu);
+        mainGuiNode.attachChild(infoMenu);
 
         inputManager.deleteMapping("click");
         /*
-        Removed Because once entries gain focus, these are pointless
+        Removed Because once entries gain focus, these are pointless*/
         inputManager.addMapping("up", new KeyTrigger(KeyInput.KEY_UP));
         inputManager.addMapping("down", new KeyTrigger(KeyInput.KEY_DOWN));
         inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_LEFT));
         inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_RIGHT));
         inputManager.addListener(onAnalog, "up", "down", "left", "right");
-        */
 
+        inputManager.addMapping("left", new MouseButtonTrigger(MouseInput.AXIS_WHEEL));
+        inputManager.addListener(onAnalog, "left");
+
+    }
+
+    protected void startProject() {
+        this.currentProject = ProjectManager.newProject(this, projectName.getText(), dirNameText.getText(), projectFileText.getText());
+        int sessions = Integer.parseInt(sessionsText.getText());
+        int trials = Integer.parseInt(sessionsText.getText());
+        currentProject.initPlatformLocations(sessions, trials);
+        currentProject.setPlatformLocation(3, 5, 0, 1, 0, 1);
+        mode = 4;
     }
 
     @Override
@@ -245,7 +274,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
                     rotNode.collideWith(ray, results);
                     try {
                         if (results.getClosestCollision().getGeometry().getName().equals("lawn_round")) {
-                            newGame("lawn_round");
+                            newProject("lawn_round");
                         }
                     } catch (NullPointerException ignored) {
 
@@ -254,26 +283,25 @@ public class GameAppState extends BaseAppState implements ActionListener {
         }
     }
     private final AnalogListener onAnalog = (name, value, tpf) -> {
-        switch (mode) {
-            case 3:
-                if (Objects.equals(name, "up")) {
-                    for (Spatial child : rotNode.getChildren()) {
-                        child.rotate(0.01f, 0, 0);
-                    }
-                } else if (Objects.equals(name, "down")) {
-                    for (Spatial child : rotNode.getChildren()) {
-                        child.rotate(-0.01f, 0, 0);
-                    }
+        if (mode == 3 || mode==4) {
+            if (Objects.equals(name, "up")) {
+                for (Spatial child : rotNode.getChildren()) {
+                    child.rotate(0.01f, 0, 0);
                 }
-                if (Objects.equals(name, "left")) {
-                    for (Spatial child : rotNode.getChildren()) {
-                        child.rotate(0f, 0f, 0.01f);
-                    }
-                } else if (Objects.equals(name, "right")) {
-                    for (Spatial child : rotNode.getChildren()) {
-                        child.rotate(0f, 0f, -0.01f);
-                    }
+            } else if (Objects.equals(name, "down")) {
+                for (Spatial child : rotNode.getChildren()) {
+                    child.rotate(-0.01f, 0, 0);
                 }
+            }
+            if (Objects.equals(name, "left")) {
+                for (Spatial child : rotNode.getChildren()) {
+                    child.rotate(0f, 0f, 0.01f);
+                }
+            } else if (Objects.equals(name, "right")) {
+                for (Spatial child : rotNode.getChildren()) {
+                    child.rotate(0f, 0f, -0.01f);
+                }
+            }
         }
     };
 }

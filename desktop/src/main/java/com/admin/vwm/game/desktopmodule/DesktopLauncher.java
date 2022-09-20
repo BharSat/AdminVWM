@@ -9,6 +9,11 @@ import com.jme3.system.AppSettings;
  */
 public class DesktopLauncher {
     public static void main(String[] args) {
+        DesktopLauncher.launch();
+    }
+
+    public static void launch() {
+
         int height = 1080;
         int width = 1192;
         final AdminVWM game = new AdminVWM(width, height);
