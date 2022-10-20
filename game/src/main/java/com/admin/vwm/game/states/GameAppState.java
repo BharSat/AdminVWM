@@ -7,9 +7,10 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.*;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -216,12 +217,12 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
         inputManager.deleteMapping("click");
         /*
-        Removed Because once entries gain focus, these are pointless*/
+        Removed Because once entries gain focus, these are pointless
         inputManager.addMapping("up", new KeyTrigger(KeyInput.KEY_UP));
         inputManager.addMapping("down", new KeyTrigger(KeyInput.KEY_DOWN));
         inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_LEFT));
         inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_RIGHT));
-        inputManager.addListener(onAnalog, "up", "down", "left", "right");
+        inputManager.addListener(onAnalog, "up", "down", "left", "right");*/
 
         inputManager.addMapping("left", new MouseButtonTrigger(MouseInput.AXIS_WHEEL));
         inputManager.addListener(onAnalog, "left");
@@ -235,6 +236,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
         currentProject.initPlatformLocations(sessions, trials);
         currentProject.setPlatformLocation(3, 5, 0, 1, 0, 1);
         mode = 4;
+        this.currentProject.save();
     }
 
     @Override

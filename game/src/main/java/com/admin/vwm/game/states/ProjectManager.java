@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
 public class ProjectManager {
     public File file;
     public Boolean init = false;
@@ -19,17 +21,21 @@ public class ProjectManager {
         if (!(pathName.charAt(0)=='*')) {
             toRet.file = openFile(pathName);
             try {
-                if (!toRet.file.createNewFile()) {
-                    parent.projectName.setText("*File Already Exists: " + pathName);
-                    toRet.init = false;
-                    return toRet;
-                }
+//                if (!toRet.file.createNewFile()) {
+//                    parent.projectName.setText("*File Already Exists: " + pathName);
+//                    toRet.init = false;
+//                    System.out.println(pathName);
+//                    return toRet;
+//                }
+                toRet.file.createNewFile();
 
                 toRet.data.clear();
-                Map<String, String> data = new HashMap<>();
-                data.put("name", projectName);
-                data.put("path", pathName);
-                toRet.data.put("data", data);
+                toRet.data.put("data", new HashMap<>());
+                toRet.data.get("data").put("name", projectName);
+                toRet.data.get("data").put("path", pathName);
+                System.out.println(toRet.data);
+
+                toRet.init = true;
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -73,6 +79,7 @@ public class ProjectManager {
     }
 
     public void initPlatformLocations(int sessions, int trials) {
+        if (!this.init) {return;}
         int session = 0;
         while (session < sessions) {
             data.put(String.valueOf(session), new HashMap<>());
@@ -84,15 +91,23 @@ public class ProjectManager {
     }
 
     public void setPlatformLocation(int sessionNo, int trialNo, float x1, float x2, float y1, float y2) {
+        System.out.println(data);
         data.get(String.valueOf(sessionNo)).put(String.valueOf(trialNo), ""+x1+" "+y1+","+x2+" "+y2);
         System.out.print(data);
+    }
+
+    public String dataToJSON() {
+        Gson gson = new Gson();
+        String toRet = gson.toJson(this.data);
+        return toRet;
     }
 
     public void save() {
         if (!platformLocationInitialized) {return;}
         try {
             FileWriter fileWriter = openFileWriter();
-            fileWriter.write();
+            fileWriter.write(this.dataToJSON());
+            System.out.println("hello" + this.dataToJSON());
             fileWriter.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

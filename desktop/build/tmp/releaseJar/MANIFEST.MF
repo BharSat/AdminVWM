@@ -2,41 +2,41 @@ Manifest-Version: 1.0
 Main-Class: com.admin.vwm.game.desktopmodule.DesktopLauncher
 Class-Path: dependencies/game.jar dependencies/jme3-effects-3.5.2-stable
  .jar dependencies/jme3-lwjgl3-3.5.2-stable.jar dependencies/jme3-deskto
- p-3.5.2-stable.jar dependencies/Minie-5.0.0.jar dependencies/lemur-prot
+ p-3.5.2-stable.jar dependencies/Minie-6.1.0.jar dependencies/lemur-prot
  o-1.13.0.jar dependencies/lemur-1.16.0.jar dependencies/jme3-jogg-3.5.2
  -stable.jar dependencies/jme3-plugins-3.5.2-stable.jar dependencies/Hea
- rt-8.0.0.jar dependencies/sim-math-1.5.0.jar dependencies/jme3-terrain-
+ rt-8.2.0.jar dependencies/sim-math-1.5.0.jar dependencies/jme3-terrain-
  3.5.2-stable.jar dependencies/jme3-core-3.5.2-stable.jar dependencies/g
- roovy-all-2.4.15.jar dependencies/lwjgl-glfw-3.3.1.jar dependencies/lwj
- gl-glfw-3.3.1-natives-windows.jar dependencies/lwjgl-glfw-3.3.1-natives
- -windows-x86.jar dependencies/lwjgl-glfw-3.3.1-natives-linux.jar depend
- encies/lwjgl-glfw-3.3.1-natives-linux-arm32.jar dependencies/lwjgl-glfw
- -3.3.1-natives-linux-arm64.jar dependencies/lwjgl-glfw-3.3.1-natives-ma
- cos.jar dependencies/lwjgl-glfw-3.3.1-natives-macos-arm64.jar dependenc
- ies/lwjgl-jemalloc-3.3.1.jar dependencies/lwjgl-jemalloc-3.3.1-natives-
- windows.jar dependencies/lwjgl-jemalloc-3.3.1-natives-windows-x86.jar d
- ependencies/lwjgl-jemalloc-3.3.1-natives-linux.jar dependencies/lwjgl-j
- emalloc-3.3.1-natives-linux-arm32.jar dependencies/lwjgl-jemalloc-3.3.1
- -natives-linux-arm64.jar dependencies/lwjgl-jemalloc-3.3.1-natives-maco
- s.jar dependencies/lwjgl-jemalloc-3.3.1-natives-macos-arm64.jar depende
- ncies/lwjgl-openal-3.3.1.jar dependencies/lwjgl-openal-3.3.1-natives-wi
- ndows.jar dependencies/lwjgl-openal-3.3.1-natives-windows-x86.jar depen
- dencies/lwjgl-openal-3.3.1-natives-linux.jar dependencies/lwjgl-openal-
- 3.3.1-natives-linux-arm32.jar dependencies/lwjgl-openal-3.3.1-natives-l
- inux-arm64.jar dependencies/lwjgl-openal-3.3.1-natives-macos.jar depend
- encies/lwjgl-openal-3.3.1-natives-macos-arm64.jar dependencies/lwjgl-op
- encl-3.3.1.jar dependencies/lwjgl-opengl-3.3.1.jar dependencies/lwjgl-o
- pengl-3.3.1-natives-windows.jar dependencies/lwjgl-opengl-3.3.1-natives
- -windows-x86.jar dependencies/lwjgl-opengl-3.3.1-natives-linux.jar depe
- ndencies/lwjgl-opengl-3.3.1-natives-linux-arm32.jar dependencies/lwjgl-
- opengl-3.3.1-natives-linux-arm64.jar dependencies/lwjgl-opengl-3.3.1-na
- tives-macos.jar dependencies/lwjgl-opengl-3.3.1-natives-macos-arm64.jar
-  dependencies/lwjgl-3.3.1.jar dependencies/lwjgl-3.3.1-natives-windows.
- jar dependencies/lwjgl-3.3.1-natives-windows-x86.jar dependencies/lwjgl
- -3.3.1-natives-linux.jar dependencies/lwjgl-3.3.1-natives-linux-arm32.j
- ar dependencies/lwjgl-3.3.1-natives-linux-arm64.jar dependencies/lwjgl-
- 3.3.1-natives-macos.jar dependencies/lwjgl-3.3.1-natives-macos-arm64.ja
- r dependencies/guava-19.0.jar dependencies/slf4j-api-1.7.32.jar depende
- ncies/j-ogg-all-1.0.1.jar dependencies/gson-2.8.1.jar dependencies/jmf-
- 2.1.1e.jar
+ roovy-jsr223-3.0.13.jar dependencies/gson-2.9.0.jar dependencies/lwjgl-
+ glfw-3.3.1.jar dependencies/lwjgl-glfw-3.3.1-natives-windows.jar depend
+ encies/lwjgl-glfw-3.3.1-natives-windows-x86.jar dependencies/lwjgl-glfw
+ -3.3.1-natives-linux.jar dependencies/lwjgl-glfw-3.3.1-natives-linux-ar
+ m32.jar dependencies/lwjgl-glfw-3.3.1-natives-linux-arm64.jar dependenc
+ ies/lwjgl-glfw-3.3.1-natives-macos.jar dependencies/lwjgl-glfw-3.3.1-na
+ tives-macos-arm64.jar dependencies/lwjgl-jemalloc-3.3.1.jar dependencie
+ s/lwjgl-jemalloc-3.3.1-natives-windows.jar dependencies/lwjgl-jemalloc-
+ 3.3.1-natives-windows-x86.jar dependencies/lwjgl-jemalloc-3.3.1-natives
+ -linux.jar dependencies/lwjgl-jemalloc-3.3.1-natives-linux-arm32.jar de
+ pendencies/lwjgl-jemalloc-3.3.1-natives-linux-arm64.jar dependencies/lw
+ jgl-jemalloc-3.3.1-natives-macos.jar dependencies/lwjgl-jemalloc-3.3.1-
+ natives-macos-arm64.jar dependencies/lwjgl-openal-3.3.1.jar dependencie
+ s/lwjgl-openal-3.3.1-natives-windows.jar dependencies/lwjgl-openal-3.3.
+ 1-natives-windows-x86.jar dependencies/lwjgl-openal-3.3.1-natives-linux
+ .jar dependencies/lwjgl-openal-3.3.1-natives-linux-arm32.jar dependenci
+ es/lwjgl-openal-3.3.1-natives-linux-arm64.jar dependencies/lwjgl-openal
+ -3.3.1-natives-macos.jar dependencies/lwjgl-openal-3.3.1-natives-macos-
+ arm64.jar dependencies/lwjgl-opencl-3.3.1.jar dependencies/lwjgl-opengl
+ -3.3.1.jar dependencies/lwjgl-opengl-3.3.1-natives-windows.jar dependen
+ cies/lwjgl-opengl-3.3.1-natives-windows-x86.jar dependencies/lwjgl-open
+ gl-3.3.1-natives-linux.jar dependencies/lwjgl-opengl-3.3.1-natives-linu
+ x-arm32.jar dependencies/lwjgl-opengl-3.3.1-natives-linux-arm64.jar dep
+ endencies/lwjgl-opengl-3.3.1-natives-macos.jar dependencies/lwjgl-openg
+ l-3.3.1-natives-macos-arm64.jar dependencies/lwjgl-3.3.1.jar dependenci
+ es/lwjgl-3.3.1-natives-windows.jar dependencies/lwjgl-3.3.1-natives-win
+ dows-x86.jar dependencies/lwjgl-3.3.1-natives-linux.jar dependencies/lw
+ jgl-3.3.1-natives-linux-arm32.jar dependencies/lwjgl-3.3.1-natives-linu
+ x-arm64.jar dependencies/lwjgl-3.3.1-natives-macos.jar dependencies/lwj
+ gl-3.3.1-natives-macos-arm64.jar dependencies/guava-19.0.jar dependenci
+ es/slf4j-api-1.7.32.jar dependencies/groovy-3.0.13.jar dependencies/j-o
+ gg-all-1.0.1.jar dependencies/jmf-2.1.1e.jar
 

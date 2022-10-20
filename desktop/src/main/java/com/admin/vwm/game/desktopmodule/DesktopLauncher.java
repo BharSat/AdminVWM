@@ -25,7 +25,7 @@ public class DesktopLauncher {
         appSettings.setHeight(height);
         appSettings.setResizable(true);
         appSettings.setWindowYPosition(100);
-        appSettings.setFullscreen(true);
+        appSettings.setFullscreen(false);
 
         game.setShowSettings(false);
         game.setDisplayFps(false);
