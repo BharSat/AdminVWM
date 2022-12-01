@@ -1,0 +1,23 @@
+VWM/Virtual Water Maze Data File
+#<Name of Experiment/Experimenter/Unique ID>;
+#<File No.>;
+
+// Comment
+// Newlines ignored
+
+#Constants
+#nooftrials <n>;
+;
+
+#Scenes
+#1 def arena <arena_name> start <x y z> plat <shape d1 d1 d3> cue<n> <x y z> "<path/to/cuefile>" cue<m> <x1 y1 z1> "<path/to/cuefile>";
+#2 def arena default plat rect 20 30 5 5 cue1 40 0 40 "a/b/c.gltf" cue2 78 8.2 54 "a/b/l.gltf";
+#3 ref file "<path/to/file>" from <no.>;
+#4 ref file "./files/f.txt" from 2;
+;
+
+#Sessions
+#1 trials 
+#1 probe <1(yes)/0(no)> start <x y z> scene <no.> cmd "<commands> rot cue1 50 0 0& mov cue 70 &";
+;
+;

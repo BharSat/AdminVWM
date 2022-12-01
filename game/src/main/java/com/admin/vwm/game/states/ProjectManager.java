@@ -1,5 +1,7 @@
 package com.admin.vwm.game.states;
 
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -7,8 +9,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.Gson;
 
 public class ProjectManager {
     public File file;
@@ -90,7 +90,7 @@ public class ProjectManager {
         System.out.println(data);
     }
 
-    public void setPlatformLocation(int sessionNo, int trialNo, float x1, float x2, float y1, float y2) {
+    public void setPlatformLocation(int sessionNo, int trialNo, float arenaScale, float i, float x1, float x2, float y1, float y2) {
         System.out.println(data);
         data.get(String.valueOf(sessionNo)).put(String.valueOf(trialNo), ""+x1+" "+y1+","+x2+" "+y2);
         System.out.print(data);

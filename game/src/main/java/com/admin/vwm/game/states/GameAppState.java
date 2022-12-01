@@ -37,12 +37,15 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected Node mainGuiNode = new Node();
     protected Label statLabel;
     protected DirectionalLight camLight = new DirectionalLight();
-    protected TextField projectName;
-    protected TextField dirNameText;
-    protected TextField sessionsText;
-    protected TextField trialsText;
-    protected TextField projectFileText;
-    protected TextField modelPath;
+    protected TextField projectNameNew;
+    protected TextField dirNameTextNew;
+    protected TextField sessionsTextNew;
+    protected TextField trialsTextNew;
+    protected TextField projectFileTextNew;
+    protected TextField modelPathNew;
+    protected  TextField sessionNoEdit;
+    protected  TextField trialNoEdit;
+    protected  TextField sizeEdit;
     protected ProjectManager currentProject;
 
 
@@ -197,21 +200,21 @@ public class GameAppState extends BaseAppState implements ActionListener {
         infoMenu.setPreferredSize(new Vector3f(cam.getWidth()/2f, cam.getHeight(), 1));
 
         infoMenu.addChild(new Label("Name: "), 0, 0);
-        projectName = infoMenu.addChild(new TextField("New Project-1"), 0, 1);
+        projectNameNew = infoMenu.addChild(new TextField("New Project-1"), 0, 1);
         infoMenu.addChild(new Label("Root Directory: "), 1, 0);
-        dirNameText = infoMenu.addChild(new TextField(System.getProperty("user.dir")), 1, 1);
+        dirNameTextNew = infoMenu.addChild(new TextField(System.getProperty("user.dir")), 1, 1);
         infoMenu.addChild(new Label("Rounds:"), 2, 0);
-        sessionsText = infoMenu.addChild(new TextField("10"), 2, 1);
+        sessionsTextNew = infoMenu.addChild(new TextField("10"), 2, 1);
         infoMenu.addChild(new Label("Trials:"), 3, 0);
-        trialsText = infoMenu.addChild(new TextField("4"), 3, 1);
+        trialsTextNew = infoMenu.addChild(new TextField("4"), 3, 1);
         infoMenu.addChild(new Label("Platform file:"), 4, 0);
-        projectFileText = infoMenu.addChild(new TextField("newProject1.csv"), 4, 1);
+        projectFileTextNew = infoMenu.addChild(new TextField("newProject1.csv"), 4, 1);
         infoMenu.addChild(new Label("Model files:"), 5, 0);
-        modelPath = infoMenu.addChild(new TextField("/models/<model_name>/<model_name>.gltf"), 5, 1);
+        modelPathNew = infoMenu.addChild(new TextField("/models/<model_name>/<model_name>.gltf"), 5, 1);
         Button saveButton = infoMenu.addChild(new Button("Main Menu"), 6, 0);
         saveButton.addClickCommands(source -> {rotNode.detachAllChildren();openMenu();});
         Button loadButton = infoMenu.addChild(new Button("Start Project"), 6, 1);
-        loadButton.addClickCommands(source -> {mainGuiNode.detachAllChildren();startProject();});
+        loadButton.addClickCommands(source -> {mainGuiNode.detachAllChildren(); editProject();});
 
         mainGuiNode.attachChild(infoMenu);
 
@@ -229,14 +232,26 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
     }
 
-    protected void startProject() {
-        this.currentProject = ProjectManager.newProject(this, projectName.getText(), dirNameText.getText(), projectFileText.getText());
-        int sessions = Integer.parseInt(sessionsText.getText());
-        int trials = Integer.parseInt(sessionsText.getText());
+    protected void editProject() {
+        this.currentProject = ProjectManager.newProject(this, projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
+        int sessions = Integer.parseInt(sessionsTextNew.getText());
+        int trials = Integer.parseInt(sessionsTextNew.getText());
         currentProject.initPlatformLocations(sessions, trials);
         currentProject.setPlatformLocation(3, 5, 0, 1, 0, 1);
         mode = 4;
         this.currentProject.save();
+        Container editProjectMenu = new Container();
+        editProjectMenu.setLocalTranslation(0, 700, 0);
+        editProjectMenu.setPreferredSize(new Vector3f(cam.getWidth()/2f, cam.getHeight(), 1));
+        editProjectMenu.addChild(new Label("Session no:"), 0, 0);
+        sessionNoEdit = editProjectMenu.addChild(new TextField("0"), 0, 1);
+        editProjectMenu.addChild(new Label("Trial no:"), 1, 0);
+        trialNoEdit = editProjectMenu.addChild(new TextField("0"), 1, 1);
+        editProjectMenu.addChild(new Label("Arena relative scale:"), 2, 0);
+        sizeEdit = editProjectMenu.addChild(new TextField("35.00"), 2, 1);
+
+        mainGuiNode.attachChild(editProjectMenu);
+
     }
 
     @Override
