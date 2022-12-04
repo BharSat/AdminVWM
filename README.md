@@ -1,7 +1,7 @@
 # AdminVWM
 
 This is the readme for AdminVWM, try to keep it up to date with any information future-you will wish past-you
-remembered to write down
+remembered to write down.
 
 ## Project set up
 This is a gradle project using JMonkey Engine and other java libraries
