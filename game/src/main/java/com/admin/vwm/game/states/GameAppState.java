@@ -20,6 +20,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.simsilica.lemur.*;
+import com.simsilica.lemur.style.BaseStyles;
 
 import java.util.Objects;
 
@@ -37,6 +38,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected Node mainGuiNode = new Node();
     protected Label statLabel;
     protected DirectionalLight camLight = new DirectionalLight();
+    protected String arenaName;
     protected TextField projectNameNew;
     protected TextField dirNameTextNew;
     protected TextField sessionsTextNew;
@@ -46,6 +48,14 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected  TextField sessionNoEdit;
     protected  TextField trialNoEdit;
     protected  TextField sizeEdit;
+    protected TextField platXEdit;
+    protected TextField platZEdit;
+    protected TextField platShapeEdit;
+    protected TextField cueNoEdit;
+    protected TextField cueXEdit;
+    protected TextField cueYEdit;
+    protected TextField cueZEdit;
+    protected TextField cueNameEdit;
     protected ProjectManager currentProject;
 
 
@@ -70,6 +80,8 @@ public class GameAppState extends BaseAppState implements ActionListener {
     @Override
     protected void onEnable() {
         GuiGlobals.initialize(this.app);
+        BaseStyles.loadGlassStyle();
+        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
 
 //        BaseStyles.loadGlassStyle();
 //        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
@@ -188,6 +200,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
         if ("lawn_round".equals(name)) {
             scene = assetManager.loadModel("Models/lawn_round.glb");
+            arenaName = "default1";
             scene.setLocalTranslation(0, 0, 0);
             rotNode.attachChild(scene);
             cam.lookAt(new Vector3f(50f, 0f, 0f), Vector3f.UNIT_Y);
@@ -235,20 +248,56 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected void editProject() {
         this.currentProject = ProjectManager.newProject(this, projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
         int sessions = Integer.parseInt(sessionsTextNew.getText());
-        int trials = Integer.parseInt(sessionsTextNew.getText());
-        currentProject.initPlatformLocations(sessions, trials);
-        currentProject.setPlatformLocation(3, 5, 0, 1, 0, 1);
+        int trials = Integer.parseInt(trialsTextNew.getText());
+        currentProject.initPlatformLocations(sessions, trials, arenaName);
         mode = 4;
         this.currentProject.save();
         Container editProjectMenu = new Container();
-        editProjectMenu.setLocalTranslation(0, 700, 0);
+        editProjectMenu.setLocalTranslation(0, 770, 0);
         editProjectMenu.setPreferredSize(new Vector3f(cam.getWidth()/2f, cam.getHeight(), 1));
-        editProjectMenu.addChild(new Label("Session no:"), 0, 0);
-        sessionNoEdit = editProjectMenu.addChild(new TextField("0"), 0, 1);
-        editProjectMenu.addChild(new Label("Trial no:"), 1, 0);
-        trialNoEdit = editProjectMenu.addChild(new TextField("0"), 1, 1);
-        editProjectMenu.addChild(new Label("Arena relative scale:"), 2, 0);
-        sizeEdit = editProjectMenu.addChild(new TextField("35.00"), 2, 1);
+
+        Container static_ = editProjectMenu.addChild(new Container(), 0, 0);
+        Container dynamic1 = editProjectMenu.addChild(new Container(), 0, 0);
+//        Container dynamic2 = editProjectMenu.addChild(new Container());
+        Container buttons = dynamic1.addChild(new Container(), 8, 1);
+
+        editProjectMenu.removeChild(static_);
+
+        dynamic1.addChild(new Label("Session no:"), 0, 0);
+        sessionNoEdit = dynamic1.addChild(new TextField("0"), 0, 1);
+        dynamic1.addChild(new Label("Trial no:"), 1, 0);
+        trialNoEdit = dynamic1.addChild(new TextField("0"), 1, 1);
+
+        dynamic1.addChild(new Label("End Region Location:"), 2, 0);
+        Container platContainer = dynamic1.addChild(new Container(), 2, 1);
+        platContainer.addChild(new Label("X:"));
+        platXEdit = platContainer.addChild(new TextField("0"), 1);
+        platContainer.addChild(new Label("Z:"));
+        platZEdit = platContainer.addChild(new TextField("0"), 1);
+        platContainer.addChild(new Label("Shape(rect, circle):"));
+        platShapeEdit = platContainer.addChild(new TextField("rect"), 1);
+
+        dynamic1.addChild(new Label("Cue Location:"), 3, 0);
+        Container cueContainer = dynamic1.addChild(new Container(), 3, 1);
+        cueContainer.addChild(new Label("Cue No."), 0, 0);
+        cueNoEdit = cueContainer.addChild(new TextField("1"), 0, 1);
+        cueContainer.addChild(new Label("Cue X"), 1, 0);
+        cueXEdit = cueContainer.addChild(new TextField("0"), 1, 1);
+        cueContainer.addChild(new Label("Cue Y"), 2, 0);
+        cueYEdit = cueContainer.addChild(new TextField("1"), 2, 1);
+        cueContainer.addChild(new Label("Cue Z"), 3, 0);
+        cueZEdit = cueContainer.addChild(new TextField("0"), 3, 1);
+        cueContainer.addChild(new Label("Cue Name"), 4, 0);
+        cueNameEdit = cueContainer.addChild(new TextField("Monkey"), 4, 1);
+
+        Button applyButton = buttons.addChild(new Button("Apply"), 0, 1);
+        Button staticButton = buttons.addChild(new Button("undo"), 0, 0);
+        Button dynamicButton = buttons.addChild(new Button("Back"), 1, 0);
+        Button exitButton = buttons.addChild(new Button("Exit"), 1, 1);
+
+        static_.addChild(new Label("Arena relative scale:"), 0, 0);
+        sizeEdit = static_.addChild(new TextField("35.00"), 0, 1);
+
 
         mainGuiNode.attachChild(editProjectMenu);
 
