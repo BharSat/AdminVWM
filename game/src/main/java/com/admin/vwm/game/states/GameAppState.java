@@ -39,12 +39,16 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected Label statLabel;
     protected DirectionalLight camLight = new DirectionalLight();
     protected String arenaName;
+
+    protected Container curContainer;
+
     protected TextField projectNameNew;
     protected TextField dirNameTextNew;
     protected TextField sessionsTextNew;
     protected TextField trialsTextNew;
     protected TextField projectFileTextNew;
     protected TextField modelPathNew;
+
     protected  TextField sessionNoEdit;
     protected  TextField trialNoEdit;
     protected  TextField sizeEdit;
@@ -56,6 +60,12 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected TextField cueYEdit;
     protected TextField cueZEdit;
     protected TextField cueNameEdit;
+    protected Container dynamic1Edit;
+    protected Container staticEdit;
+
+    protected int curSession = 0;
+    protected int curTrial = 0;
+
     protected ProjectManager currentProject;
 
 
@@ -209,6 +219,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
 
         Container infoMenu = new Container();
+        this.curContainer = infoMenu;
         infoMenu.setLocalTranslation(0, 700, 0);
         infoMenu.setPreferredSize(new Vector3f(cam.getWidth()/2f, cam.getHeight(), 1));
 
@@ -253,23 +264,24 @@ public class GameAppState extends BaseAppState implements ActionListener {
         mode = 4;
         this.currentProject.save();
         Container editProjectMenu = new Container();
+        this.curContainer = editProjectMenu;
         editProjectMenu.setLocalTranslation(0, 770, 0);
         editProjectMenu.setPreferredSize(new Vector3f(cam.getWidth()/2f, cam.getHeight(), 1));
 
-        Container static_ = editProjectMenu.addChild(new Container(), 0, 0);
-        Container dynamic1 = editProjectMenu.addChild(new Container(), 0, 0);
+        staticEdit = editProjectMenu.addChild(new Container(), 0, 0);
+        dynamic1Edit = editProjectMenu.addChild(new Container(), 0, 0);
 //        Container dynamic2 = editProjectMenu.addChild(new Container());
-        Container buttons = dynamic1.addChild(new Container(), 8, 1);
+        Container buttons = dynamic1Edit.addChild(new Container(), 8, 1);
 
-        editProjectMenu.removeChild(static_);
+        editProjectMenu.removeChild(staticEdit);
 
-        dynamic1.addChild(new Label("Session no:"), 0, 0);
-        sessionNoEdit = dynamic1.addChild(new TextField("0"), 0, 1);
-        dynamic1.addChild(new Label("Trial no:"), 1, 0);
-        trialNoEdit = dynamic1.addChild(new TextField("0"), 1, 1);
+        dynamic1Edit.addChild(new Label("Session no:"), 0, 0);
+        sessionNoEdit = dynamic1Edit.addChild(new TextField("0"), 0, 1);
+        dynamic1Edit.addChild(new Label("Trial no:"), 1, 0);
+        trialNoEdit = dynamic1Edit.addChild(new TextField("0"), 1, 1);
 
-        dynamic1.addChild(new Label("End Region Location:"), 2, 0);
-        Container platContainer = dynamic1.addChild(new Container(), 2, 1);
+        dynamic1Edit.addChild(new Label("End Region Location:"), 2, 0);
+        Container platContainer = dynamic1Edit.addChild(new Container(), 2, 1);
         platContainer.addChild(new Label("X:"));
         platXEdit = platContainer.addChild(new TextField("0"), 1);
         platContainer.addChild(new Label("Z:"));
@@ -277,8 +289,8 @@ public class GameAppState extends BaseAppState implements ActionListener {
         platContainer.addChild(new Label("Shape(rect, circle):"));
         platShapeEdit = platContainer.addChild(new TextField("rect"), 1);
 
-        dynamic1.addChild(new Label("Cue Location:"), 3, 0);
-        Container cueContainer = dynamic1.addChild(new Container(), 3, 1);
+        dynamic1Edit.addChild(new Label("Cue Location:"), 3, 0);
+        Container cueContainer = dynamic1Edit.addChild(new Container(), 3, 1);
         cueContainer.addChild(new Label("Cue No."), 0, 0);
         cueNoEdit = cueContainer.addChild(new TextField("1"), 0, 1);
         cueContainer.addChild(new Label("Cue X"), 1, 0);
@@ -291,16 +303,40 @@ public class GameAppState extends BaseAppState implements ActionListener {
         cueNameEdit = cueContainer.addChild(new TextField("Monkey"), 4, 1);
 
         Button applyButton = buttons.addChild(new Button("Apply"), 0, 1);
-        Button staticButton = buttons.addChild(new Button("undo"), 0, 0);
-        Button dynamicButton = buttons.addChild(new Button("Back"), 1, 0);
+        Button staticButton = buttons.addChild(new Button("General Settings"), 0, 0);
+        staticButton.addClickCommands(source -> {generalSettings()})
+        Button dynamicButton = buttons.addChild(new Button("Trial/Session Specific Settings"), 1, 0);
+        dynamicButton.addClickCommands(source -> {specifcSettings()})
         Button exitButton = buttons.addChild(new Button("Exit"), 1, 1);
 
-        static_.addChild(new Label("Arena relative scale:"), 0, 0);
-        sizeEdit = static_.addChild(new TextField("35.00"), 0, 1);
+        staticEdit.addChild(new Label("Arena relative scale:"), 0, 0);
+        sizeEdit = staticEdit.addChild(new TextField("35.00"), 0, 1);
 
 
         mainGuiNode.attachChild(editProjectMenu);
 
+    }
+
+    protected void generalSettings() {
+        if (mode==4) {
+            this.curContainer.removeChild(dynamic1Edit);
+            this.currentProject.save();
+            this.curContainer.addChild(staticEdit);
+        }
+    }
+
+    protected void specifcSettings() {
+        if (mode==4) {
+            this.curContainer.removeChild(staticEdit);
+            this.currentProject.save()
+            this.curContainer.addChild(dynamic1Edit);
+        }
+    }
+
+    protected void applyChanges() {
+        if (mode==4) {
+            this.currentProject.save();
+        }
     }
 
     @Override
