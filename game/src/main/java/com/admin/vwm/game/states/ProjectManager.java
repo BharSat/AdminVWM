@@ -91,10 +91,10 @@ public class ProjectManager {
         System.out.println(dataToString());
     }
 
-    public void setPlatformLocation(int sessionNo, int trialNo, float x1, float x2, float y1, float y2) {
-        System.out.println(data);
-        data.get(String.valueOf(sessionNo)).put(String.valueOf(trialNo), ""+x1+" "+y1+","+x2+" "+y2);
-        System.out.print(data);
+    public void setDynamicData(int sessionNo, int trialNo,
+                               float platX, float platY, String platShape, float lengthXDiameter, float widthZDiameter,
+                               int cueNo, int cueX, int cueY, int cueZ, int cueName) {
+
     }
 
     public String dataToJSON() {

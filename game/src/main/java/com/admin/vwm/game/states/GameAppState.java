@@ -37,7 +37,6 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected Node rotNode = new Node();
     protected Node mainGuiNode = new Node();
     protected Label statLabel;
-    protected DirectionalLight camLight = new DirectionalLight();
     protected String arenaName;
 
     protected Container curContainer;
@@ -51,9 +50,17 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
     protected  TextField sessionNoEdit;
     protected  TextField trialNoEdit;
+
     protected  TextField sizeEdit;
+    protected  TextField playerSpeedEdit;
+    protected TextField modelPathEdit;
+    protected TextField sessionsEdit;
+    protected TextField trialsEdit;
+
     protected TextField platXEdit;
     protected TextField platZEdit;
+    protected TextField platLengthDiameterEdit;
+    protected TextField platWidthDiameterEdit;
     protected TextField platShapeEdit;
     protected TextField cueNoEdit;
     protected TextField cueXEdit;
@@ -62,6 +69,8 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected TextField cueNameEdit;
     protected Container dynamic1Edit;
     protected Container staticEdit;
+    protected Container buttons;
+    protected String modeEdit;
 
     protected int curSession = 0;
     protected int curTrial = 0;
@@ -92,9 +101,6 @@ public class GameAppState extends BaseAppState implements ActionListener {
         GuiGlobals.initialize(this.app);
         BaseStyles.loadGlassStyle();
         GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
-
-//        BaseStyles.loadGlassStyle();
-//        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
 
         Container stats = new Container();
         stats.setLocalTranslation(app.width*30f/32f, 50,0);
@@ -137,7 +143,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
         Button openButton = menu.addChild(new Button("Open Project"));
         openButton.setFontSize(app.height/8f);
         openButton.setTextHAlignment(HAlignment.Center);
-        Button recentButton = menu.addChild(new Button("Recents Project"));
+        Button recentButton = menu.addChild(new Button("Recent Projects"));
         recentButton.setFontSize(app.height/8f);
         recentButton.setTextHAlignment(HAlignment.Center);
 
@@ -180,14 +186,6 @@ public class GameAppState extends BaseAppState implements ActionListener {
         Container startWindow = new Container();
         startWindow.setLocalTranslation(0, (app.height)-300, 0);
         startWindow.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight(), 1));
-
-//        Label startLabel = startWindow.addChild(new Label("Welcome to Gui Design"));
-//        startLabel.setFontSize(1f);
-//        startLabel.setTextHAlignment(HAlignment.Center);
-//        startLabel.setLocalTranslation(0f, 0f, 10f);
-//        startLabel.rotate(0, 180, 0);
-//
-//        rootNode.attachChild(startLabel);
     }
 
     public void newProject(String name) {
@@ -270,8 +268,8 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
         staticEdit = editProjectMenu.addChild(new Container(), 0, 0);
         dynamic1Edit = editProjectMenu.addChild(new Container(), 0, 0);
-//        Container dynamic2 = editProjectMenu.addChild(new Container());
-        Container buttons = dynamic1Edit.addChild(new Container(), 8, 1);
+        buttons = dynamic1Edit.addChild(new Container(), 7, 1);
+        modeEdit = "dynamic";
 
         editProjectMenu.removeChild(staticEdit);
 
@@ -288,6 +286,10 @@ public class GameAppState extends BaseAppState implements ActionListener {
         platZEdit = platContainer.addChild(new TextField("0"), 1);
         platContainer.addChild(new Label("Shape(rect, circle):"));
         platShapeEdit = platContainer.addChild(new TextField("rect"), 1);
+        platContainer.addChild(new Label("Length/x Diameter"));
+        platLengthDiameterEdit = platContainer.addChild(new TextField("5.00"), 1);
+        platContainer.addChild(new Label("Width/z Diameter"));
+        platWidthDiameterEdit = platContainer.addChild(new TextField("5.00"), 1);
 
         dynamic1Edit.addChild(new Label("Cue Location:"), 3, 0);
         Container cueContainer = dynamic1Edit.addChild(new Container(), 3, 1);
@@ -303,14 +305,27 @@ public class GameAppState extends BaseAppState implements ActionListener {
         cueNameEdit = cueContainer.addChild(new TextField("Monkey"), 4, 1);
 
         Button applyButton = buttons.addChild(new Button("Apply"), 0, 1);
+        applyButton.addClickCommands(source -> applyChanges());
         Button staticButton = buttons.addChild(new Button("General Settings"), 0, 0);
-        staticButton.addClickCommands(source -> {generalSettings()})
+        staticButton.addClickCommands(source -> generalSettings());
         Button dynamicButton = buttons.addChild(new Button("Trial/Session Specific Settings"), 1, 0);
-        dynamicButton.addClickCommands(source -> {specifcSettings()})
-        Button exitButton = buttons.addChild(new Button("Exit"), 1, 1);
+        dynamicButton.addClickCommands(source -> specificSettings());
+        Button nextButton = buttons.addChild(new Button("Next"), 1, 1);
 
         staticEdit.addChild(new Label("Arena relative scale:"), 0, 0);
         sizeEdit = staticEdit.addChild(new TextField("35.00"), 0, 1);
+
+        staticEdit.addChild(new Label("Player relative speed:"), 1, 0);
+        playerSpeedEdit = staticEdit.addChild(new TextField("0.0"), 1, 1);
+
+        staticEdit.addChild(new Label("Model Format"), 2, 0);
+        modelPathEdit = staticEdit.addChild(new TextField(modelPathNew.getText()), 2, 1);
+
+        staticEdit.addChild(new Label("Sessions:"), 3, 0);
+        sessionsEdit = staticEdit.addChild(new TextField(sessionsTextNew.getText()), 3, 1);
+
+        staticEdit.addChild(new Label("Trials:"), 4, 0);
+        trialsEdit = staticEdit.addChild(new TextField(trialsTextNew.getText()), 4, 1);
 
 
         mainGuiNode.attachChild(editProjectMenu);
@@ -318,18 +333,22 @@ public class GameAppState extends BaseAppState implements ActionListener {
     }
 
     protected void generalSettings() {
-        if (mode==4) {
+        if (mode==4 && !modeEdit.equals("static")) {
             this.curContainer.removeChild(dynamic1Edit);
             this.currentProject.save();
             this.curContainer.addChild(staticEdit);
+            staticEdit.addChild(buttons, 7, 1);
+            modeEdit = "static";
         }
     }
 
-    protected void specifcSettings() {
-        if (mode==4) {
+    protected void specificSettings() {
+        if (mode==4 && !modeEdit.equals("dynamic")) {
             this.curContainer.removeChild(staticEdit);
-            this.currentProject.save()
+            this.currentProject.save();
             this.curContainer.addChild(dynamic1Edit);
+            dynamic1Edit.addChild(buttons, 7, 1);
+            modeEdit = "dynamic";
         }
     }
 
