@@ -77,9 +77,6 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected Container buttons;
     protected String modeEdit;
 
-    protected int curSession = 0;
-    protected int curTrial = 0;
-
     protected ProjectManager currentProject;
 
 
@@ -282,8 +279,8 @@ public class GameAppState extends BaseAppState implements ActionListener {
         sessionNoEdit = dynamic1Edit.addChild(new TextField("0"), 0, 1);
         dynamic1Edit.addChild(new Label("Trial no:"), 1, 0);
         trialNoEdit = dynamic1Edit.addChild(new TextField("0"), 1, 1);
-        dynamic1Edit.addChild(new Label("Probe?: (yes/no)"));
-        probeEdit = dynamic1Edit.addChild(new TextField("no"));
+        dynamic1Edit.addChild(new Label("Probe?: (yes/no)"), 6, 0);
+        probeEdit = dynamic1Edit.addChild(new TextField("no"), 6, 1);
 
         dynamic1Edit.addChild(new Label("End Region Location:"), 2, 0);
         Container platContainer = dynamic1Edit.addChild(new Container(), 2, 1);
@@ -314,7 +311,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
         dynamic1Edit.addChild(new Label("Start Location"), 5, 0);
         Container startContainer = dynamic1Edit.addChild(new Container(), 5, 1);
         startContainer.addChild(new Label("X:"), 0, 0);
-        startXEdit = startContainer.addChild(new TextField("0.0"), 0, 0);
+        startXEdit = startContainer.addChild(new TextField("0.0"), 0, 1);
         startContainer.addChild(new Label("Z:"), 1, 0);
         startZEdit = startContainer.addChild(new TextField("0.0"), 1, 1);
 

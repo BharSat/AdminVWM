@@ -96,14 +96,15 @@ public class ProjectManager {
         data.get("data").put("sessions", String.valueOf(sessions));
         data.get("data").put("trials", String.valueOf(trials));
         data.get("data").put("arena", arenaName);
-        System.out.println(dataToString());
+        platformLocationInitialized = true;
     }
 
     public void setDynamicData(int sessionNo, int trialNo, boolean probe,
                                float startX, float startZ,
                                float platX, float platZ, String platShape, float lengthXDiameter, float widthZDiameter,
                                int cueNo, float cueX, float cueY, float cueZ, String cueName) {
-        Map<String, String> temp = new HashMap<>();
+        Map <String, String> temp = data.get(String.valueOf(sessionNo));
+        if (temp==null) {temp = new HashMap<>();}
         temp.put(String.valueOf(trialNo), "probe " + boolYesNo(probe)
                 + " start " + startX + " " + startZ
                 + " end " + platX + " " + platZ + " " + platShape + " " + lengthXDiameter + " " + widthZDiameter);
@@ -130,18 +131,23 @@ public class ProjectManager {
         toRet += "#0;\n";
         toRet += "#Home \"" + this.data.get("data").get("path") + "\";\n";
         toRet += "#Constants\n#no_of_sessions " + this.data.get("data").get("sessions") + ";\n";
-        toRet += "#no_of_trials " + this.data.get("data").get("trials") + ";\n;\n";
-
-        toRet += "#Scenes\n";
-        toRet += "#1 " + "def arena " + this.data.get("data").get("arena") + " plat rect 0.0 0.0 1.0 1.0 " + ";\n";
+        toRet += "#no_of_trials " + this.data.get("data").get("trials") + ";\n";
+        toRet += "#cue_format " + this.data.get("data").get("modelFormat") + ";\n";
+        toRet += "#arena " + this.data.get("data").get("arena") + ";\n";
+        toRet += "#arena_scale " + this.data.get("data").get("scale") + ";\n";
+        toRet += "#player_speed " + this.data.get("data").get("speed") + ";\n";
         toRet += ";\n";
+
+//        toRet += "#Scenes\n";
+//        toRet += "#1 " + "def arena " + this.data.get("data").get("arena") + " plat rect 0.0 0.0 1.0 1.0 " + ";\n";
+//        toRet += ";\n";
 
         toRet += "#Sessions\n";
         for (int i=0, n = Integer.parseInt(this.data.get("data").get("sessions")); i < n; i++) {
             toRet += "#" + (i+1) + "\n";
             toRet += "\t#trials\n";
             for (int j=0, m = Integer.parseInt(this.data.get("data").get("trials")); j < m; j++) {
-                toRet += "\t#" + (j+1) + " probe 0 start 0 0 0 scene 1;\n";
+                toRet += "\t#" + (j+1) + " " + data.get(String.valueOf(i)).get(String.valueOf(j));
             }
             toRet +="\t;";
             toRet +=";\n";
@@ -157,9 +163,9 @@ public class ProjectManager {
     public void save() {
         if (!platformLocationInitialized) {return;}
         try {
+            truncate(true);
             FileWriter fileWriter = openFileWriter();
             fileWriter.write(this.dataToString());
-            System.out.println("hello, " + this.dataToString());
             fileWriter.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
