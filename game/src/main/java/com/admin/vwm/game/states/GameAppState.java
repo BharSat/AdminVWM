@@ -22,6 +22,7 @@ import com.jme3.scene.Spatial;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.style.BaseStyles;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public class GameAppState extends BaseAppState implements ActionListener {
@@ -56,6 +57,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected TextField modelPathEdit;
     protected TextField sessionsEdit;
     protected TextField trialsEdit;
+    protected TextField probeEdit;
 
     protected TextField platXEdit;
     protected TextField platZEdit;
@@ -67,6 +69,9 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected TextField cueYEdit;
     protected TextField cueZEdit;
     protected TextField cueNameEdit;
+    protected TextField startXEdit;
+    protected TextField startZEdit;
+
     protected Container dynamic1Edit;
     protected Container staticEdit;
     protected Container buttons;
@@ -255,7 +260,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
     }
 
     protected void editProject() {
-        this.currentProject = ProjectManager.newProject(this, projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
+        this.currentProject = ProjectManager.newProject(projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
         int sessions = Integer.parseInt(sessionsTextNew.getText());
         int trials = Integer.parseInt(trialsTextNew.getText());
         currentProject.initPlatformLocations(sessions, trials, arenaName);
@@ -277,6 +282,8 @@ public class GameAppState extends BaseAppState implements ActionListener {
         sessionNoEdit = dynamic1Edit.addChild(new TextField("0"), 0, 1);
         dynamic1Edit.addChild(new Label("Trial no:"), 1, 0);
         trialNoEdit = dynamic1Edit.addChild(new TextField("0"), 1, 1);
+        dynamic1Edit.addChild(new Label("Probe?: (yes/no)"));
+        probeEdit = dynamic1Edit.addChild(new TextField("no"));
 
         dynamic1Edit.addChild(new Label("End Region Location:"), 2, 0);
         Container platContainer = dynamic1Edit.addChild(new Container(), 2, 1);
@@ -303,6 +310,13 @@ public class GameAppState extends BaseAppState implements ActionListener {
         cueZEdit = cueContainer.addChild(new TextField("0"), 3, 1);
         cueContainer.addChild(new Label("Cue Name"), 4, 0);
         cueNameEdit = cueContainer.addChild(new TextField("Monkey"), 4, 1);
+
+        dynamic1Edit.addChild(new Label("Start Location"), 5, 0);
+        Container startContainer = dynamic1Edit.addChild(new Container(), 5, 1);
+        startContainer.addChild(new Label("X:"), 0, 0);
+        startXEdit = startContainer.addChild(new TextField("0.0"), 0, 0);
+        startContainer.addChild(new Label("Z:"), 1, 0);
+        startZEdit = startContainer.addChild(new TextField("0.0"), 1, 1);
 
         Button applyButton = buttons.addChild(new Button("Apply"), 0, 1);
         applyButton.addClickCommands(source -> applyChanges());
@@ -354,8 +368,22 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
     protected void applyChanges() {
         if (mode==4) {
+            if (modeEdit.equals("dynamic")) {
+                this.currentProject.setDynamicData(
+                        Integer.parseInt(sessionNoEdit.getText()), Integer.parseInt(trialNoEdit.getText()), yesNoBool(probeEdit.getText()),
+                        Float.parseFloat(startXEdit.getText()), Float.parseFloat(startZEdit.getText()),
+                        Float.parseFloat(platXEdit.getText()), Float.parseFloat(platZEdit.getText()), platShapeEdit.getText(), Float.parseFloat(platLengthDiameterEdit.getText()), Float.parseFloat(platWidthDiameterEdit.getText()),
+                        Integer.parseInt(cueNoEdit.getText()), Float.parseFloat(cueXEdit.getText()), Float.parseFloat(cueYEdit.getText()), Float.parseFloat(cueZEdit.getText()), cueNameEdit.getText()
+                        );
+            } else if (modeEdit.equals("static")) {
+                this.currentProject.setStaticData(Float.parseFloat(sizeEdit.getText()), Float.parseFloat(playerSpeedEdit.getText()), modelPathEdit.getText(), Integer.parseInt(sessionsEdit.getText()), Integer.parseInt(trialsEdit.getText()));
+            }
             this.currentProject.save();
         }
+    }
+
+    private boolean yesNoBool(String in) {
+        return in.toLowerCase(Locale.ROOT).equals("yes");
     }
 
     @Override

@@ -14,9 +14,10 @@ public class ProjectManager {
     public File file;
     public Boolean init = false;
     protected Map<String, Map<String, String>> data = new HashMap<>();
+    protected Map<Integer, Map<Integer, Map<Integer, String>>> cueMap = new HashMap<>();
     protected Boolean platformLocationInitialized = false;
 
-    public static ProjectManager newProject(GameAppState parent, String projectName, String pathName) {
+    public static ProjectManager newProject(String projectName, String pathName) {
         ProjectManager toRet = new ProjectManager();
         if (!(pathName.charAt(0)=='*')) {
             toRet.file = openFile(pathName);
@@ -27,7 +28,7 @@ public class ProjectManager {
 //                    System.out.println(pathName);
 //                    return toRet;
 //                }
-                toRet.file.createNewFile();
+                boolean r = toRet.file.createNewFile();
 
                 toRet.data.clear();
                 toRet.data.put("data", new HashMap<>());
@@ -43,8 +44,8 @@ public class ProjectManager {
         }
         return toRet;
     }
-    public static ProjectManager newProject(GameAppState parent, String projectName ,String rootName, String projectFilePath) {
-        return ProjectManager.newProject(parent, projectName, Paths.get(rootName, projectFilePath).toString());
+    public static ProjectManager newProject(String projectName ,String rootName, String projectFilePath) {
+        return ProjectManager.newProject(projectName, Paths.get(rootName, projectFilePath).toString());
     }
 
     public static File openFile(String filePath){
@@ -83,6 +84,13 @@ public class ProjectManager {
         int session = 0;
         while (session < sessions) {
             data.put(String.valueOf(session), new HashMap<>());
+            Map<Integer, Map<Integer, String>> a = new HashMap<>();
+            int trial = 0;
+            while (trial < trials) {
+                a.put(trial, new HashMap<>());
+                trial++;
+            }
+            cueMap.put(session, a);
             session++;
         }
         data.get("data").put("sessions", String.valueOf(sessions));
@@ -91,16 +99,29 @@ public class ProjectManager {
         System.out.println(dataToString());
     }
 
-    public void setDynamicData(int sessionNo, int trialNo,
-                               float platX, float platY, String platShape, float lengthXDiameter, float widthZDiameter,
-                               int cueNo, int cueX, int cueY, int cueZ, int cueName) {
+    public void setDynamicData(int sessionNo, int trialNo, boolean probe,
+                               float startX, float startZ,
+                               float platX, float platZ, String platShape, float lengthXDiameter, float widthZDiameter,
+                               int cueNo, float cueX, float cueY, float cueZ, String cueName) {
+        Map<String, String> temp = new HashMap<>();
+        temp.put(String.valueOf(trialNo), "probe " + boolYesNo(probe)
+                + " start " + startX + " " + startZ
+                + " end " + platX + " " + platZ + " " + platShape + " " + lengthXDiameter + " " + widthZDiameter);
+        cueMap.get(sessionNo).get(trialNo).put(cueNo, "" + cueX + " " + cueY + " " + cueZ + " \"" + cueName + "\"");
+        data.put(String.valueOf(sessionNo), temp);
+    }
 
+    public void setStaticData(float scale, float speed, String modelFormat, int noOfSession, int noOfTrials) {
+        data.get("data").put("scale", String.valueOf(scale));
+        data.get("data").put("speed", String.valueOf(speed));
+        data.get("data").put("modelFormat", String.valueOf(modelFormat));
+        data.get("data").put("sessions", String.valueOf(noOfSession));
+        data.get("data").put("trials", String.valueOf(noOfTrials));
     }
 
     public String dataToJSON() {
         Gson gson = new Gson();
-        String toRet = gson.toJson(this.data);
-        return toRet;
+        return gson.toJson(this.data);
     }
 
     public String dataToString() {
@@ -127,6 +148,10 @@ public class ProjectManager {
         }
         toRet += ";\n";
         return toRet;
+    }
+    public String boolYesNo(boolean in) {
+        if (in) {return "yes";}
+        return "no";
     }
 
     public void save() {

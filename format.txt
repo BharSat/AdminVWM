@@ -10,19 +10,23 @@ VWM/Virtual Water Maze Data File - 1.0.0
 #Constants
 #no_of_sessions <n>;
 #no_of_trials <n>;
-#cue_format "</models/<name>/<name>.gltf>"
+#cue_format "</models/<name>/<name>.gltf>";
+#arena <arena_name>;
+#arena_scale <n>;
+#player_speed <m>;
 ;
 
-#Scenes
-#1 def arena <arena_name> plat <shape d1 d1 d3> cue<n> <x y z> "<path/to/cuefile>" cue<m> <x1 y1 z1> "name of cue";
-#2 def arena default1 plat rect 20 30 5 5 cue1 40 0 40 "a/b/c.gltf" cue2 78 8.2 54 "a/b/l.gltf";
-#3 ref file "<path/to/file>" from <no.>;
-#4 ref file "./files/f.txt" from 2;
-;
+// To Be Imlemented in future
+// #Scenes
+// #1 def arena <arena_name> plat <shape d1 d1 d3> cue<n> <x y z> "<path/to/cuefile>" cue<m> <x1 y1 z1> "name of cue";
+// #2 def arena default1 plat rect 20 30 5 5 cue1 40 0 40 "a/b/c.gltf" cue2 78 8.2 54 "a/b/l.gltf";
+// #3 ref file "<path/to/file>" from <no.>;
+// #4 ref file "./files/f.txt" from 2;
+// ;
 
 #Sessions
 #1 #trials 
-#1 probe <1(yes)/0(no)> start <x y z> scene <no.> cue<n> <x y z> "<path/to/cuefile>" cue<m> <x1 y1 z1> "name of cue" cmd "<commands> rot cue1 50 0 0& mov cue1 70 0 0";;
+#1 probe <yes/no> start <x z> end <x z shape h/d w/d> cue<n> <x y z> "<path/to/cuefile>" cue<m> <x1 y1 z1> "name of cue" cmd "<commands> rot cue1 50 0 0& mov cue1 70 0 0";;
 ;
 ;
 //Commands: new set rot mov add del end exit skip warn
