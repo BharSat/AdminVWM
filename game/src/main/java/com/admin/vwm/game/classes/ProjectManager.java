@@ -1,4 +1,4 @@
-package com.admin.vwm.game.states;
+package com.admin.vwm.game.classes;
 
 import com.google.gson.Gson;
 
@@ -17,18 +17,17 @@ public class ProjectManager {
     protected Map<Integer, Map<Integer, Map<Integer, String>>> cueMap = new HashMap<>();
     protected Boolean platformLocationInitialized = false;
 
-    public static ProjectManager newProject(String projectName, String pathName) {
+    public static ProjectManager newProject(GameAppState parent, String projectName, String pathName) {
         ProjectManager toRet = new ProjectManager();
         if (!(pathName.charAt(0)=='*')) {
             toRet.file = openFile(pathName);
             try {
-//                if (!toRet.file.createNewFile()) {
-//                    parent.projectName.setText("*File Already Exists: " + pathName);
-//                    toRet.init = false;
-//                    System.out.println(pathName);
-//                    return toRet;
-//                }
-                boolean r = toRet.file.createNewFile();
+                if (!toRet.file.createNewFile()) {
+                    parent.projectNameNew.setText("*File Already Exists: " + pathName);
+                    toRet.init = false;
+                    System.out.println(pathName);
+                    return toRet;
+                }
 
                 toRet.data.clear();
                 toRet.data.put("data", new HashMap<>());
@@ -44,8 +43,8 @@ public class ProjectManager {
         }
         return toRet;
     }
-    public static ProjectManager newProject(String projectName ,String rootName, String projectFilePath) {
-        return ProjectManager.newProject(projectName, Paths.get(rootName, projectFilePath).toString());
+    public static ProjectManager newProject(GameAppState parent, String projectName ,String rootName, String projectFilePath) {
+        return ProjectManager.newProject(parent, projectName, Paths.get(rootName, projectFilePath).toString());
     }
 
     public static File openFile(String filePath){
@@ -60,10 +59,10 @@ public class ProjectManager {
         return new FileWriter(this.file, true);
     }
 
-    public FileWriter truncate(Boolean close) throws IOException {
+    public void truncate(Boolean close) throws IOException {
         FileWriter trunc = new FileWriter(this.file, false);
-        if (close) {trunc.close(); return trunc;}
-        return trunc;
+        if (close) {trunc.close();
+        }
 
     }
 
@@ -138,10 +137,6 @@ public class ProjectManager {
         toRet += "#player_speed " + this.data.get("data").get("speed") + ";\n";
         toRet += ";\n";
 
-//        toRet += "#Scenes\n";
-//        toRet += "#1 " + "def arena " + this.data.get("data").get("arena") + " plat rect 0.0 0.0 1.0 1.0 " + ";\n";
-//        toRet += ";\n";
-
         toRet += "#Sessions\n";
         for (int i=0, n = Integer.parseInt(this.data.get("data").get("sessions")); i < n; i++) {
             toRet += "#" + (i+1) + "\n";
@@ -153,8 +148,11 @@ public class ProjectManager {
             toRet +=";\n";
         }
         toRet += ";\n";
+
+        toRet += "\n#End;\n";
         return toRet;
     }
+
     public String boolYesNo(boolean in) {
         if (in) {return "yes";}
         return "no";

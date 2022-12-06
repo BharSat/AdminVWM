@@ -1,0 +1,32 @@
+package com.admin.vwm.game.classes;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Loop {
+    protected String name;
+    protected List<Loop> children = new ArrayList<>();
+    protected List<String> args = new ArrayList<>();
+    public Loop (String name, List<String> args) {
+        this.name = name;
+        this.args.addAll(args);
+    }
+    public Loop addChild(Loop toAdd) {
+        children.add(toAdd);
+        return toAdd;
+    }
+    public Loop getChild(int index) {
+        return children.get(index);
+    }
+    public String addArg(String argument, int index) {
+        args.add(index, argument);
+        return argument;
+    }
+    public String addArg(String argument) {
+        args.add(argument);
+        return argument;
+    }
+    public String getArg(int i) {
+        return this.args.get(i);
+    }
+}

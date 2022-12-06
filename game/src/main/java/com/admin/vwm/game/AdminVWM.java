@@ -1,11 +1,7 @@
 package com.admin.vwm.game;
 
-import com.admin.vwm.game.states.GameAppState;
+import com.admin.vwm.game.classes.GameAppState;
 import com.jme3.app.SimpleApplication;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
 import com.jme3.app.state.AppState;
 
 /**

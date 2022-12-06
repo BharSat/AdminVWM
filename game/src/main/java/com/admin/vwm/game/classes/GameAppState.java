@@ -1,4 +1,4 @@
-package com.admin.vwm.game.states;
+package com.admin.vwm.game.classes;
 
 import com.admin.vwm.game.AdminVWM;
 import com.jme3.app.Application;
@@ -257,7 +257,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
     }
 
     protected void editProject() {
-        this.currentProject = ProjectManager.newProject(projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
+        this.currentProject = ProjectManager.newProject(this, projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
         int sessions = Integer.parseInt(sessionsTextNew.getText());
         int trials = Integer.parseInt(trialsTextNew.getText());
         currentProject.initPlatformLocations(sessions, trials, arenaName);
