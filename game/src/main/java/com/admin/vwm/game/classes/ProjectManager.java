@@ -17,13 +17,12 @@ public class ProjectManager {
     protected Map<Integer, Map<Integer, Map<Integer, String>>> cueMap = new HashMap<>();
     protected Boolean platformLocationInitialized = false;
 
-    public static ProjectManager newProject(GameAppState parent, String projectName, String pathName) {
+    public static ProjectManager newProject(String projectName, String pathName) {
         ProjectManager toRet = new ProjectManager();
         if (!(pathName.charAt(0)=='*')) {
             toRet.file = openFile(pathName);
             try {
                 if (!toRet.file.createNewFile()) {
-                    parent.projectNameNew.setText("*File Already Exists: " + pathName);
                     toRet.init = false;
                     System.out.println(pathName);
                     return toRet;
@@ -43,8 +42,8 @@ public class ProjectManager {
         }
         return toRet;
     }
-    public static ProjectManager newProject(GameAppState parent, String projectName ,String rootName, String projectFilePath) {
-        return ProjectManager.newProject(parent, projectName, Paths.get(rootName, projectFilePath).toString());
+    public static ProjectManager newProject(String projectName ,String rootName, String projectFilePath) {
+        return ProjectManager.newProject(projectName, Paths.get(rootName, projectFilePath).toString());
     }
 
     public static File openFile(String filePath){

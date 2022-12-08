@@ -1,27 +1,27 @@
 VWM/Virtual Water Maze Data File - 1.0.0
-#<Name of Experiment/Experimenter/Unique ID>;
-#<File No.>;
+#<Name of Experiment/Experimenter/Unique ID> ;
+#<File No.> ;
 
-#Home <home_path>;
+#Home <home_path> ;
 
 // Comment
 // Newlines & TABS ignored
 
 #Constants
-#no_of_sessions <n>;
-#no_of_trials <n>;
-#cue_format "</models/<name>/<name>.gltf>";
-#arena <arena_name>;
-#arena_scale <n>;
-#player_speed <m>;
+no_of_sessions <n> 
+no_of_trials <n> 
+cue_format "</models/<name>/<name>.gltf>" 
+arena <arena_name> 
+arena_scale <n> 
+player_speed <m> 
 ;
 
 // To Be Imlemented in future
 // #Scenes
-// #1 def arena <arena_name> plat <shape d1 d1 d3> cue<n> <x y z> "<path/to/cuefile>" cue<m> <x1 y1 z1> "name of cue";
-// #2 def arena default1 plat rect 20 30 5 5 cue1 40 0 40 "a/b/c.gltf" cue2 78 8.2 54 "a/b/l.gltf";
-// #3 ref file "<path/to/file>" from <no.>;
-// #4 ref file "./files/f.txt" from 2;
+// #1 def arena <arena_name> plat <shape d1 d1 d3> cue<n> <x y z> "<path/to/cuefile>" cue<m> <x1 y1 z1> "name of cue" ;
+// #2 def arena default1 plat rect 20 30 5 5 cue1 40 0 40 "a/b/c.gltf" cue2 78 8.2 54 "a/b/l.gltf" ;
+// #3 ref file "<path/to/file>" from <no.> ;
+// #4 ref file "./files/f.txt" from 2 ;
 // ;
 
 #Sessions
@@ -30,5 +30,5 @@ VWM/Virtual Water Maze Data File - 1.0.0
 ;
 ;
 
-#End;
+#End ;
 //Commands: new set rot mov add del end exit skip warn
