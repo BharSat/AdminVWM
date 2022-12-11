@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Loop {
     public String name;
-    protected List<Loop> children = new ArrayList<>();
+    public List<Loop> children = new ArrayList<>();
     protected List<String> args = new ArrayList<>();
     protected Loop parent;
     public Loop (String name, List<String> args) {
@@ -39,6 +39,7 @@ public class Loop {
     public String getArg(int i) {
         return this.args.get(i);
     }
+    public List<String> getArgs() {return args;}
 
     public Loop parent(Loop parent) {
         this.parent = parent;

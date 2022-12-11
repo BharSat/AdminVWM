@@ -1,0 +1,46 @@
+VWM/Virtual Water Maze Data File - 1.0.0
+#New Project-1;
+#0;
+#Home "D:\bhargav\projects\AdminVWM\newProject1.csv";
+#Constants
+#no_of_sessions 10;
+#no_of_trials 4;
+#cue_format null;
+#arena default1;
+#arena_scale null;
+#player_speed null;
+;
+#Sessions
+#1
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#2
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#3
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#4
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#5
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#6
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#7
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#8
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#9
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+#10
+	#trials
+	#1 null	#2 null	#3 null	#4 null	;;
+;
+
+#End;
