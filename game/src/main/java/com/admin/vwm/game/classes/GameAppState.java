@@ -188,6 +188,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
         Container startWindow = new Container();
         startWindow.setLocalTranslation(0, (app.height)-300, 0);
         startWindow.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight(), 1));
+        newProject("lawn_round");
     }
 
     public void newProject(String name) {

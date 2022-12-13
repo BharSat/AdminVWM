@@ -10,7 +10,7 @@ VWM/Virtual Water Maze Data File - 1.0.0
 #Constants
 no_of_sessions <n> 
 no_of_trials <n> 
-cue_format "</models/<name>/<name>.gltf>" 
+cue_format "</models/<model_name>/<model_name>.gltf>" 
 arena <arena_name> 
 arena_scale <n> 
 player_speed <m> 

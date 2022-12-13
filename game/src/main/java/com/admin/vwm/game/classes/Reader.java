@@ -1,4 +1,4 @@
-package com.spatial.learning.jme.game;
+package com.admin.vwm.game.classes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Reader {
-    com.spatial.learning.jme.game.ProjectManager parent;
+    ProjectManager parent;
 
-    public Reader(com.spatial.learning.jme.game.ProjectManager parent) {
+    public Reader(ProjectManager parent) {
         this.parent = parent;
     }
 
