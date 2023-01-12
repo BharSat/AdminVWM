@@ -15,16 +15,9 @@ public class ProjectManager {
     protected Map<Integer, Map<Integer, Map<Integer, String>>> cueMap = new HashMap<>();
     protected Boolean platformLocationInitialized = false;
 
-    public static ProjectManager newProject(String projectName, String pathName) {
-        ProjectManager toRet = new ProjectManager();
+    public static ProjectManager editProject( ProjectManager toRet, String projectName, String pathName) {
         if (!(pathName.charAt(0) == '*')) {
             toRet.file = openFile(pathName);
-            try {
-                if (!toRet.file.createNewFile()) {
-                    toRet.init = false;
-                    System.out.println(pathName);
-                    return toRet;
-                }
 
                 toRet.data.clear();
                 toRet.data.put("data", new HashMap<>());
@@ -33,16 +26,18 @@ public class ProjectManager {
                 System.out.println(toRet.data);
 
                 toRet.init = true;
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
         return toRet;
     }
 
+    public static ProjectManager editProject(ProjectManager toRet, String projectName, String rootName, String projectFilePath) {
+        return ProjectManager.editProject(toRet, projectName, Paths.get(rootName, projectFilePath).toString());
+    }
+    public static ProjectManager newProject(String projectName, String pathName) {
+        return ProjectManager.editProject(new ProjectManager(), projectName, pathName);
+    }
     public static ProjectManager newProject(String projectName, String rootName, String projectFilePath) {
-        return ProjectManager.newProject(projectName, Paths.get(rootName, projectFilePath).toString());
+        return ProjectManager.editProject(new ProjectManager(), projectName, rootName, projectFilePath);
     }
 
     public static File openFile(String filePath) {
@@ -138,12 +133,12 @@ public class ProjectManager {
         toRet += "#Sessions\n";
         for (int i = 0, n = Integer.parseInt(this.data.get("data").get("sessions")); i < n; i++) {
             toRet += "#" + (i + 1) + "\n";
-            toRet += "\t#trials\n";
             for (int j = 0, m = Integer.parseInt(this.data.get("data").get("trials")); j < m; j++) {
                 toRet += "\t#" + (j + 1) + " " + data.get(String.valueOf(i)).get(String.valueOf(j));
                 for (int k = 0, o = this.cueMap.get(i).get(j).size(); k < o; k++) {
                     toRet += " cue " + k + " " + this.cueMap.get(i).get(j).get(k) + " ";
                 }
+                toRet += "\n";
             }
             toRet += "\n";
         }

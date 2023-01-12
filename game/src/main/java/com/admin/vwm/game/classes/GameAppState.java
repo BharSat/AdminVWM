@@ -22,6 +22,8 @@ import com.jme3.scene.Spatial;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.style.BaseStyles;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -78,6 +80,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
     protected String modeEdit;
 
     protected ProjectManager currentProject;
+    protected boolean hasBeenRead = false;
 
 
     @Override
@@ -111,9 +114,10 @@ public class GameAppState extends BaseAppState implements ActionListener {
         guiNode.attachChild(stats);
 
         Container startWindow = new Container();
-        startWindow.setLocalTranslation(0, 800, 0);
-        startWindow.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight(), 1));
 
+//        startWindow.setLocalTranslation(0, this.app.height, 0);
+//        startWindow.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight(), 1));
+//        GuiGlobals.getInstance().getPopupState().centerInGui(startWindow);
         Label startLabel = startWindow.addChild(new Label("Welcome to Gui Design"));
         startLabel.setFontSize(app.height/8f);
         startLabel.setTextHAlignment(HAlignment.Center);
@@ -122,6 +126,9 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
         startButton.setFontSize(app.height/8f);
         startButton.setTextHAlignment(HAlignment.Center);
+
+        Vector3f preferredHeight = startWindow.getPreferredSize().mult(0.5f);
+        startWindow.setLocalTranslation(this.app.getCamera().getWidth()*.5f-preferredHeight.x, this.app.getCamera().getHeight()*.5f-preferredHeight.z, 0);
 
         mainGuiNode.attachChild(startWindow);
     }
@@ -135,19 +142,23 @@ public class GameAppState extends BaseAppState implements ActionListener {
         mainGuiNode.detachAllChildren();
 
         Container menu = new Container();
-        menu.setLocalTranslation(0, 800, 0);
-        menu.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight(), 1));
+//        menu.setLocalTranslation(0, 800, 0);
+//        menu.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight(), 1));
 
         Button newButton = menu.addChild(new Button("New Project"));
         newButton.addClickCommands(source -> newSettings());
         newButton.setFontSize(app.height/8f);
         newButton.setTextHAlignment(HAlignment.Center);
         Button openButton = menu.addChild(new Button("Open Project"));
+        openButton.addClickCommands(source->openSettingsMenu());
         openButton.setFontSize(app.height/8f);
         openButton.setTextHAlignment(HAlignment.Center);
         Button recentButton = menu.addChild(new Button("Recent Projects"));
         recentButton.setFontSize(app.height/8f);
         recentButton.setTextHAlignment(HAlignment.Center);
+
+        Vector3f preferredHeight = menu.getPreferredSize().mult(0.5f);
+        menu.setLocalTranslation(this.app.getCamera().getWidth()*.5f-preferredHeight.x, this.app.getCamera().getHeight()-preferredHeight.z, 0);
 
         mainGuiNode.attachChild(menu);
     }
@@ -166,6 +177,8 @@ public class GameAppState extends BaseAppState implements ActionListener {
         Label newLabel = newWindow.addChild(new Label("Choose Your Scene:"));
         newLabel.setFontSize(app.height/32f);
         newLabel.setTextHAlignment(HAlignment.Center);
+//        Vector3f preferredHeight = newWindow.getPreferredSize().mult(0.5f);
+//        newWindow.setLocalTranslation(this.app.getCamera().getWidth()*.5f-preferredHeight.x, this.app.getCamera().getHeight()*.5f-preferredHeight.z, 0);
         mainGuiNode.attachChild(newWindow);
 
         Spatial model = assetManager.loadModel("Models/lawn_round.glb");
@@ -188,10 +201,52 @@ public class GameAppState extends BaseAppState implements ActionListener {
         Container startWindow = new Container();
         startWindow.setLocalTranslation(0, (app.height)-300, 0);
         startWindow.setPreferredSize(new Vector3f(cam.getWidth(), cam.getHeight(), 1));
-        newProject("lawn_round");
+        newProjectScreen("lawn_round");
+    }
+    protected void openSettingsMenu() {
+        this.currentProject = new ProjectManager();
+        mainGuiNode.detachAllChildren();
+        Container pathContainer = new Container();
+        pathContainer.addChild(new Label("Enter The Path"));
+        TextField pathField = pathContainer.addChild(new TextField(""));
+        Button openButton = pathContainer.addChild(new Button("Open"));
+        openButton.addClickCommands(source -> openSettings(pathField));
+    }
+    protected void openSettings(TextField pathField) {
+        String pathString = pathField.getText();
+        Reader reader = new Reader(this.currentProject);
+
+        BufferedReader bReader = null;
+        try {
+            bReader = new BufferedReader(ProjectManager.openFileReader(pathString));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        String ls = System.getProperty("line.separator");
+        while (true) {
+            try {
+                if ((line = bReader.readLine()) == null) break;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            stringBuilder.append(line);
+            stringBuilder.append(ls);
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        try {
+            bReader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String content = stringBuilder.toString();
+        this.currentProject.data = reader.stringToData(content);
+        this.hasBeenRead = true;
     }
 
-    public void newProject(String name) {
+    public void newProjectScreen(String name) {
         mode = 3;
         System.out.println(name);
         mainGuiNode.detachAllChildren();
@@ -239,8 +294,9 @@ public class GameAppState extends BaseAppState implements ActionListener {
         Button saveButton = infoMenu.addChild(new Button("Main Menu"), 6, 0);
         saveButton.addClickCommands(source -> {rotNode.detachAllChildren();openMenu();});
         Button loadButton = infoMenu.addChild(new Button("Start Project"), 6, 1);
-        loadButton.addClickCommands(source -> {mainGuiNode.detachAllChildren(); editProject();});
+        loadButton.addClickCommands(source -> {mainGuiNode.detachAllChildren(); editProjectScreen();});
 
+        infoMenu.setLocalTranslation(.5f, this.app.getCamera().getHeight()+.5f, 0);
         mainGuiNode.attachChild(infoMenu);
 
         inputManager.deleteMapping("click");
@@ -257,11 +313,17 @@ public class GameAppState extends BaseAppState implements ActionListener {
 
     }
 
-    protected void editProject() {
-        this.currentProject = ProjectManager.newProject(this.projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
-        int sessions = Integer.parseInt(sessionsTextNew.getText());
-        int trials = Integer.parseInt(trialsTextNew.getText());
-        currentProject.initPlatformLocations(sessions, trials, arenaName);
+    protected void editProjectScreen() {
+        if (!hasBeenRead) {
+            this.currentProject = ProjectManager.newProject(this.projectNameNew.getText(), dirNameTextNew.getText(), projectFileTextNew.getText());
+            int sessions = Integer.parseInt(sessionsTextNew.getText());
+            int trials = Integer.parseInt(trialsTextNew.getText());
+            currentProject.initPlatformLocations(sessions, trials, arenaName);
+        } else {
+            int sessions = Integer.parseInt(this.currentProject.data.get("data").get("sessions"));
+            int trials = Integer.parseInt(this.currentProject.data.get("data").get("trials"));
+            currentProject.initPlatformLocations(sessions, trials, this.currentProject.data.get("data").get("arena"));
+        }
         mode = 4;
         this.currentProject.save();
         Container editProjectMenu = new Container();
@@ -319,10 +381,11 @@ public class GameAppState extends BaseAppState implements ActionListener {
         Button applyButton = buttons.addChild(new Button("Apply"), 0, 1);
         applyButton.addClickCommands(source -> applyChanges());
         Button staticButton = buttons.addChild(new Button("General Settings"), 0, 0);
-        staticButton.addClickCommands(source -> generalSettings());
+        staticButton.addClickCommands(source -> opneGeneralSettingsScreen());
         Button dynamicButton = buttons.addChild(new Button("Trial/Session Specific Settings"), 1, 0);
-        dynamicButton.addClickCommands(source -> specificSettings());
-        Button nextButton = buttons.addChild(new Button("Next"), 1, 1);
+        dynamicButton.addClickCommands(source -> openSpecificSettingsScene());
+        Button getButton = buttons.addChild(new Button("Get"), 1, 1);
+        getButton.addClickCommands(source -> this.getSettings());
 
         staticEdit.addChild(new Label("Arena relative scale:"), 0, 0);
         sizeEdit = staticEdit.addChild(new TextField("35.00"), 0, 1);
@@ -340,11 +403,12 @@ public class GameAppState extends BaseAppState implements ActionListener {
         trialsEdit = staticEdit.addChild(new TextField(trialsTextNew.getText()), 4, 1);
 
 
+        editProjectMenu.setLocalTranslation(.5f, this.app.getCamera().getHeight()+.5f, 0);
         mainGuiNode.attachChild(editProjectMenu);
 
     }
 
-    protected void generalSettings() {
+    protected void opneGeneralSettingsScreen() {
         if (mode==4 && !modeEdit.equals("static")) {
             this.curContainer.removeChild(dynamic1Edit);
             this.currentProject.save();
@@ -354,7 +418,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
         }
     }
 
-    protected void specificSettings() {
+    protected void openSpecificSettingsScene() {
         if (mode==4 && !modeEdit.equals("dynamic")) {
             this.curContainer.removeChild(staticEdit);
             this.currentProject.save();
@@ -377,6 +441,12 @@ public class GameAppState extends BaseAppState implements ActionListener {
                 this.currentProject.setStaticData(Float.parseFloat(sizeEdit.getText()), Float.parseFloat(playerSpeedEdit.getText()), modelPathEdit.getText(), Integer.parseInt(sessionsEdit.getText()), Integer.parseInt(trialsEdit.getText()));
             }
             this.currentProject.save();
+        }
+    }
+
+    protected void getSettings() {
+        if (mode==4 && modeEdit.equals("dynamic")) {
+
         }
     }
 
@@ -421,7 +491,7 @@ public class GameAppState extends BaseAppState implements ActionListener {
                     rotNode.collideWith(ray, results);
                     try {
                         if (results.getClosestCollision().getGeometry().getName().equals("lawn_round")) {
-                            newProject("lawn_round");
+                            newProjectScreen("lawn_round");
                         }
                     } catch (NullPointerException ignored) {
 
