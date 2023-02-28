@@ -23,5 +23,6 @@ dependencies {
     implementation 'org.codehaus.groovy:groovy-jsr223:3.0.13'
     implementation 'com.google.code.gson:gson:2.9.0'
 
+    implementation 'net.sf.bluecove:bluecove:2.1.0'
 }
 
